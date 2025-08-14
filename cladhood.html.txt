@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>30-Day Self-Reset Guide</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+    }
+    h1 {
+        text-align: center;
+        margin-top: 20px;
+    }
+    /* Tabs */
+    .tab {
+        overflow: hidden;
+        background-color: #333;
+    }
+    .tab button {
+        background-color: inherit;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        color: white;
+        transition: 0.3s;
+        font-size: 17px;
+    }
+    .tab button:hover {
+        background-color: #444;
+    }
+    .tab button.active {
+        background-color: #4CAF50;
+    }
+    /* Tab content */
+    .tabcontent {
+        display: none;
+        padding: 20px;
+    }
+    /* Habit Tracker styles */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        margin-bottom: 20px;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    input[type="checkbox"] {
+        transform: scale(1.3);
+        cursor: pointer;
+    }
+    .btn {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        cursor: pointer;
+        margin-top: 10px;
+        border-radius: 5px;
+    }
+    .btn:hover {
+        background-color: #45a049;
+    }
+    /* Reflection Journal styles */
+    .day-container {
+        background: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    textarea {
+        width: 100%;
+        height: 150px;
+        margin-top: 10px;
+        padding: 10px;
+        font-size: 16px;
+        resize: vertical;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+</style>
+</head>
+<body>
+
+<h1>30-Day Self-Reset Guide</h1>
+
+<div class="tab">
+  <button class="tablinks active" onclick="openTab(event, 'tracker')">Habit Tracker</button>
+  <button class="tablinks" onclick="openTab(event, 'journal')">Reflection Journal</button>
+</div>
+
+<!-- Habit Tracker -->
+<div id="tracker" class="tabcontent" style="display:block;">
+    <h2>Part 1 – Habit Tracker</h2>
+    <table id="habitTable">
+        <thead>
+            <tr>
+                <th>Day</th>
+                <th>Theme</th>
+                <th>Affirmation</th>
+                <th>Action 1</th>
+                <th>Action 2</th>
+                <th>Action 3</th>
+                <th>Completed?</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <button class="btn" onclick="resetTracker()">Reset All</button>
+</div>
+
+<!-- Reflection Journal -->
+<div id="journal" class="tabcontent">
+    <h2>Part 2 – Reflection Journal</h2>
+    <div id="journalContainer"></div>
+</div>
+
+<script>
+// --- HABIT TRACKER DATA ---
+const habits = [
+    {day: 1, theme: "Mindful Awakening", affirmation: "I choose to be present right now.", actions: ["Sit quietly 5 min", "Gratitude list", "Set intention"]},
+    {day: 2, theme: "Morning Energy Boost", affirmation: "I give my body the energy it deserves.", actions: ["5-min workout", "Drink water", "Eat balanced breakfast"]},
+    {day: 3, theme: "Digital Declutter", affirmation: "I control my digital space.", actions: ["Unsubscribe from 5 emails", "Delete unused apps", "Organize files"]},
+    {day: 4, theme: "Hydration Reset", affirmation: "Water energizes and cleanses me.", actions: ["Drink 8 glasses", "Limit sugary drinks", "Start day with water"]},
+    {day: 5, theme: "Nature Connection", affirmation: "I find peace in nature.", actions: ["Walk outside", "Notice 3 natural details", "Deep breaths outdoors"]},
+    {day: 6, theme: "Mindful Eating", affirmation: "I nourish my body with care.", actions: ["Eat without distractions", "Chew slowly", "Notice flavors"]},
+    {day: 7, theme: "Weekly Reflection", affirmation: "I learn from my week.", actions: ["Review wins", "Identify challenges", "Plan next week"]},
+    {day: 8, theme: "Declutter Space", affirmation: "A clear space clears my mind.", actions: ["Tidy 1 area", "Donate items", "Wipe surfaces"]},
+    {day: 9, theme: "Stretch & Move", affirmation: "Movement keeps me alive.", actions: ["Stretch 10 min", "Walk 15 min", "Roll shoulders/neck"]},
+    {day: 10, theme: "Gratitude Deep Dive", affirmation: "Gratitude expands my joy.", actions: ["List 10 things", "Tell someone thanks", "Write why grateful"]},
+    {day: 11, theme: "Social Connection", affirmation: "I value meaningful relationships.", actions: ["Message a friend", "Have real conversation", "Give compliment"]},
+    {day: 12, theme: "Tech-Free Hour", affirmation: "I own my time.", actions: ["1 hr no screens", "Read book", "Meditate or journal"]},
+    {day: 13, theme: "Creative Spark", affirmation: "I am creative every day.", actions: ["Draw/write", "Try new recipe", "Brainstorm ideas"]},
+    {day: 14, theme: "Weekly Reflection", affirmation: "Awareness leads to growth.", actions: ["Review week", "Note lessons", "Set focus"]},
+    {day: 15, theme: "Mindful Breathing", affirmation: "My breath anchors me.", actions: ["3 deep breaths", "4-7-8 breathing", "Observe breath"]},
+    {day: 16, theme: "Healthy Fuel", affirmation: "I choose energy-giving food.", actions: ["Eat greens", "Limit sugar", "Drink water"]},
+    {day: 17, theme: "Digital Reset", affirmation: "I set tech boundaries.", actions: ["Organize inbox", "Limit social media", "Clean desktop"]},
+    {day: 18, theme: "Acts of Kindness", affirmation: "Kindness fuels connection.", actions: ["Help someone", "Compliment stranger", "Share encouraging words"]},
+    {day: 19, theme: "Self-Care Evening", affirmation: "I honor my needs.", actions: ["Warm bath", "Skincare", "Stretch before bed"]},
+    {day: 20, theme: "Learn Something", affirmation: "I grow every day.", actions: ["Read article", "Watch tutorial", "Note key takeaway"]},
+    {day: 21, theme: "Weekly Reflection", affirmation: "Reflection builds wisdom.", actions: ["Review week", "Identify changes", "Plan ahead"]},
+    {day: 22, theme: "Early Morning Start", affirmation: "I embrace the quiet morning.", actions: ["Wake 30 min early", "Meditate", "Plan day"]},
+    {day: 23, theme: "Declutter Mind", affirmation: "I release mental clutter.", actions: ["Write worries", "Shred paper", "Focus on present"]},
+    {day: 24, theme: "Hydration Challenge", affirmation: "Water renews my energy.", actions: ["Track water", "Herbal tea", "Limit caffeine"]},
+    {day: 25, theme: "Nature Walk", affirmation: "Nature heals my mind.", actions: ["30-min walk", "Notice sounds", "Breathe deeply"]},
+    {day: 26, theme: "Creative Day", affirmation: "Creativity is my gift.", actions: ["Make art", "Write story", "Try new project"]},
+    {day: 27, theme: "Weekly Reflection", affirmation: "I honor my journey.", actions: ["Review progress", "Celebrate wins", "Set goals"]},
+    {day: 28, theme: "Mindful Tech Use", affirmation: "I use tech intentionally.", actions: ["Set screen limits", "No phone meals", "Clean phone screen"]},
+    {day: 29, theme: "Gratitude & Giving", affirmation: "Giving enriches my soul.", actions: ["Thank 3 people", "Give small gift", "Share resource"]},
+    {day: 30, theme: "Celebrate & Plan", affirmation: "I am proud of my growth.", actions: ["Reflect journey", "Write next steps", "Celebrate"]},
+];
+
+function loadHabits() {
+    const tableBody = document.querySelector("#habitTable tbody");
+    tableBody.innerHTML = "";
+    habits.forEach(habit => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${habit.day}</td>
+            <td>${habit.theme}</td>
+            <td>${habit.affirmation}</td>
+            ${habit.actions.map((act, i) => `<td><input type="checkbox" data-day="${habit.day}" data-action="${i}"></td>`).join("")}
+            <td><input type="checkbox" data-day="${habit.day}" data-complete="true"></td>
+        `;
+        tableBody.appendChild(row);
+    });
+    loadProgress();
+}
+
+function saveProgress() {
+    const checkboxes = document.querySelectorAll('#habitTable input[type="checkbox"]');
+    const progress = {};
+    checkboxes.forEach(cb => {
+        const key = `${cb.dataset.day}-${cb.dataset.action ?? 'complete'}`;
+        progress[key] = cb.checked;
+    });
+    localStorage.setItem("habitProgress", JSON.stringify(progress));
+}
+
+function loadProgress() {
+    const saved = JSON.parse(localStorage.getItem("habitProgress") || "{}");
+    document.querySelectorAll('#habitTable input[type="checkbox"]').forEach(cb => {
+        const key = `${cb.dataset.day}-${cb.dataset.action ?? 'complete'}`;
+        cb.checked = !!saved[key];
+    });
+}
+
+function resetTracker() {
+    if (confirm("Are you sure you want to reset all progress?")) {
+        localStorage.removeItem("habitProgress");
+        loadHabits();
+    }
+}
+
+document.addEventListener("change", e => {
+    if (e.target.closest('#habitTable') && e.target.type === "checkbox") {
+        saveProgress();
+    }
+});
+
+// --- REFLECTION JOURNAL DATA ---
+const reflections = habits.map(h => ({
+    day: h.day,
+    theme: h.theme,
+    question: `Reflect on today's theme: ${h.theme}. What did you notice, feel, or learn from today's actions?`
+}));
+
+function loadJournal() {
+    const container = document.getElementById("journalContainer");
+    container.innerHTML = "";
+    reflections.forEach(entry => {
+        const div = document.createElement("div");
+        div.classList.add("day-container");
+        div.innerHTML = `
+            <h3>Day ${entry.day} – ${entry.theme}</h3>
+            <p><strong>Reflection Question:</strong> ${entry.question}</p>
+            <textarea data-day="${entry.day}" placeholder="Write your reflection here..."></textarea>
+            <br>
+            <button class="btn" onclick="saveEntry(${entry.day})">Save</button>
+        `;
+        container.appendChild(div);
+    });
+    loadSavedEntries();
+}
+
+function saveEntry(day) {
+    const textarea = document.querySelector(`textarea[data-day="${day}"]`);
+    const savedData = JSON.parse(localStorage.getItem("reflectionJournal") || "{}");
+    savedData[day] = textarea.value;
+    localStorage.setItem("reflectionJournal", JSON.stringify(savedData));
+    alert(`Day ${day} reflection saved!`);
+}
+
+function loadSavedEntries() {
+    const savedData = JSON.parse(localStorage.getItem("reflectionJournal") || "{}");
+    Object.keys(savedData).forEach(day => {
+        const textarea = document.querySelector(`textarea[data-day="${day}"]`);
+        if (textarea) textarea.value = savedData[day];
+    });
+}
+
+// --- TAB SWITCHING ---
+function openTab(evt, tabName) {
+    const tabcontent = document.getElementsByClassName("tabcontent");
+    for (let i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    const tablinks = document.getElementsByClassName("tablinks");
+    for (let i = 0; i < tablinks.length; i++) {
+        tablinks[i].classList.remove("active");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.classList.add("active");
+}
+
+// --- INIT ---
+loadHabits();
+loadJournal();
+</script>
+
+</body>
+</html>
